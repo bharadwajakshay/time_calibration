@@ -1,0 +1,5 @@
+<launch>
+	<node pkg="time_calibration" type="time_calibration" name="time_calibration" output="screen" launch-prefix="gdb -ex run --args">
+	</node>
+
+</launch>
