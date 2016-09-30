@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(time_calibration)
 
 find_package(cmake_modules REQUIRED)
-find_package(Eigen REQUIRED)
+find_package(Eigen3 REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy

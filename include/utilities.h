@@ -52,7 +52,7 @@
 #define MAX_GPS_TIME_TRACKER 10000
 //#defines
 //#define _DEBUG
-#define _SAVE_IMAGE
+//#define _SAVE_IMAGE
 
 class msg_listener
 {
@@ -61,7 +61,7 @@ public:
 	void callbackIRimage(const sensor_msgs::Image::ConstPtr& msg);
 	void callbackcolorimage(const sensor_msgs::Image::ConstPtr& msg);
 	void callbackubloxpvt (const ublox_node::UbloxPVT::ConstPtr& msg);
-	void callbackubloxraw (const obs_msgs::GnssRaw::ConstPtr& msg);
+	void callbackubloxraw (const ublox_node::UbloxRaw::ConstPtr& msg);
 	void callbackgnss (const gnss_node::GnssOut::ConstPtr& msg);
 	void gray_2_dec(char s[],int len);
 	unsigned long long hex2dec(const std::string &input);

@@ -10,7 +10,9 @@
 msg_listener::msg_listener()
 {
 	sub_irimg = nh.subscribe("/structure/ir/image",1000,&msg_listener::callbackIRimage,this);
+#ifdef _COLOR_IMAGE
 	sub_colorimg = nh.subscribe("/usb_cam/image_raw",1000,&msg_listener::callbackcolorimage,this);
+#endif
 	sub_ubxpvt = nh.subscribe("/ublox/ubxpvt",1000,&msg_listener::callbackubloxpvt,this);
 	sub_ubxraw = nh.subscribe("/ublox/ubxraw",1000,&msg_listener::callbackubloxraw,this);
 	sub_gnss = nh.subscribe("/gnss/pvt",1000,&msg_listener::callbackubloxpvt,this);
@@ -27,7 +29,8 @@ msg_listener::msg_listener()
 	//gps_rep_ros_sec.clear();
 	gps_sec_disp=0;
 	std::setprecision(10);
-#ifdef _DEBUG
+	clock_error=0;
+#ifdef _SAVE_IMAGE
 	loop_count =0;
 #endif
 }
@@ -46,6 +49,8 @@ void msg_listener::callbackIRimage(const sensor_msgs::Image::ConstPtr& msg)
 #ifdef _DEBUG
 	ROS_INFO("The reported time :%15.15f",rep_ros_time);
 #endif
+
+#ifdef _COLOR_IMAGE
 	//check for the closest color image reported
 	for (int i=0;i<color_image_count;i++)
 	{
@@ -56,8 +61,11 @@ void msg_listener::callbackIRimage(const sensor_msgs::Image::ConstPtr& msg)
 			frame_no = i;
 		}
 	}
+#endif
 	cv::imshow("IR Image",ir_image);
+#ifdef _COLOR_IMAGE
 	cv::imshow("Closest Color Image",color_img[frame_no]);
+#endif
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 #ifdef _SAVE_IMAGE
@@ -66,9 +74,11 @@ void msg_listener::callbackIRimage(const sensor_msgs::Image::ConstPtr& msg)
 	sprintf(filename_ir,"/home/nuc/images/ir_image%d.jpg",loop_count);
 	std::cout<<filename_ir<<std::endl;
 	cv::imwrite( filename_ir, ir_image );
+#ifdef _COLOR_IMAGE
 	sprintf(filename_clr,"/home/nuc/images/color_image%d.jpg",loop_count);
 	std::cout<<filename_clr<<std::endl;
 	cv::imwrite( filename_clr, color_img[frame_no]);
+#endif
 #endif
 	color_image_count = 0;
 	ROS_INFO_STREAM("Enter the 16-bit value seen in the image one byte at a time as a Hex value");
@@ -102,7 +112,7 @@ void msg_listener::callbackubloxpvt(const ublox_node::UbloxPVT::ConstPtr& msg)
 
 }
 
-void msg_listener::callbackubloxraw (const obs_msgs::GnssRaw::ConstPtr& msg)
+void msg_listener::callbackubloxraw (const ublox_node::UbloxRaw::ConstPtr& msg)
 {
 #ifdef _DEBUG
 	ROS_INFO_STREAM("Entered UBLOX RAW message call back");
